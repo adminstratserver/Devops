@@ -1,0 +1,32 @@
+---
+- name: Create database and user
+  hosts: server1
+  vars:
+    db_database: test_db1
+    db_user: test_user1
+    db_password: qwert12345
+
+  tasks:
+
+    - name: Create database
+      become: true
+      become_user: postgres
+      postgresql_db:
+            name: '{{ db_database }}'
+            encoding: UTF-8
+
+
+    - name: Create user
+      postgresql_user: name={{ db_user }} password={{ db_password }}
+      become: true
+      become_user: postgres
+
+    - name: GRANT ALL PRIVILEGES ON DATABASE to user
+      become: true
+      become_user: postgres
+      postgresql_privs:
+        db: acme
+        privs: ALL
+        type: database
+        objs: '{{ db_database }}'
+        role: '{{ db_user }}'
