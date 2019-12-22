@@ -25,7 +25,7 @@
       become: true
       become_user: postgres
       postgresql_privs:
-        db: acme
+        db: '{{ db_database }}'
         privs: ALL
         type: database
         objs: '{{ db_database }}'

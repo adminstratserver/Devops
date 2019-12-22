@@ -2,6 +2,7 @@
 - hosts: server1
   vars:
     new_username: djangoadmin16
+    file_privatekey: id_ansible
   tasks:
 
   - name: Create a login user
@@ -23,10 +24,7 @@
       line: '%sudo ALL=(ALL) NOPASSWD: ALL'
       validate: 'visudo -cf %s'
 
-#  - name: Create a .ssh directory
-#    command: mkdir /home/'{{ new_username }}'/.ssh
-
-  - name: Ansible check directory.
+  - name: Check directory.
     stat:
       path: /home/{{ new_username }}/.ssh
     register: my_folder
@@ -36,12 +34,19 @@
       path: /home/{{ new_username }}/.ssh
       state: directory
       mode: 0755
-      #group: root
-      #owner: '{{ new_username }}'
     when: my_folder.stat.exists == false
 
   - name: Copy authorized_keys file
     command: cp ~/.ssh/authorized_keys /home/{{ new_username }}/.ssh/authorized_keys
 
-  - name: Change ACL permissions
+  - name: Copy private file to remote server
+    copy:
+      src: ~/.ssh/{{ file_privatekey }}
+      dest: /home/{{ new_username }}/.ssh/{{ file_privatekey }}
+      mode: u=r,og=---
+
+  - name: Change ACL permissions of authorized_keys to new user
     command: setfacl -m u:{{ new_username }}:r /home/{{ new_username }}/.ssh/authorized_keys
+
+  - name: Change ACL permissions of file_privatekey to new user
+    command: setfacl -m u:{{ new_username }}:r /home/{{ new_username }}/.ssh/{{ file_privatekey }}
