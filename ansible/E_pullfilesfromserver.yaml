@@ -1,0 +1,35 @@
+---
+- hosts: local
+  #name: ssh-add keys
+  tasks:
+
+  - name: enable ssh agent
+    shell: eval $(ssh-agent -s)
+
+  - name: ssh-add id_ansible
+    shell: |
+        ssh-add ~/.ssh/id_ansible
+
+  - name: ssh-add admin_optionnalytics
+    shell: |
+        ssh-add ~/.ssh/admin_optionnalytics
+
+- hosts: server1
+  #name: git pull
+  vars:
+    dir_project: pyapps
+    new_username: djangoadmin16
+    #git_repo: https://github.com/adminstratserver/ONT_V47.git
+    git_repo: https://github.com/adminstratserver/Devops.git
+
+  tasks:
+
+  - name: clone repository from github
+    git:
+      repo: '{{ git_repo }}'
+      dest: /home/{{ new_username }}/{{ dir_project }}
+      refspec: '+refs/pull/*:refs/heads/*'
+
+  - name: create a venv environment inside pyapps directory
+    become: true
+    command: python3 -m venv /home/{{ new_username }}/{{ dir_project }}/venv

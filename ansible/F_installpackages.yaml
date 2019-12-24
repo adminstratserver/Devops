@@ -1,0 +1,15 @@
+---
+- hosts: server1
+  name: install packages from requirements.txt
+  vars:
+    new_username: djangoadmin16
+    dir_project: pyapps
+    app_dir: ONTV_Files
+
+  tasks:
+
+  - name: Install dependencies
+    become: true
+    pip:    requirements=/home/{{ new_username }}/{{ dir_project }}/{{ app_dir }}/requirements4.txt
+            virtualenv=/home/{{ new_username }}/{{ dir_project }}/venv
+            virtualenv_python=python3.6.9
