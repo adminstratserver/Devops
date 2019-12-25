@@ -1,5 +1,5 @@
 [servers]
-server1 ansible_host=128.199.159.122
+server1 ansible_host=159.89.151.169
 
 [local]
 local_machine ansible_connection=local ansible_host=localhost

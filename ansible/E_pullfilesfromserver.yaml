@@ -3,16 +3,18 @@
   #name: ssh-add keys
   tasks:
 
-  - name: enable ssh agent
-    shell: eval $(ssh-agent -s)
-
-  - name: ssh-add id_ansible
+  - name: enable ssh agent and add id_ansible
     shell: |
-        ssh-add ~/.ssh/id_ansible
+      eval "$(ssh-agent)"
+      ssh-add ~/.ssh/id_ansible
 
-  - name: ssh-add admin_optionnalytics
-    shell: |
-        ssh-add ~/.ssh/admin_optionnalytics
+#  - name: ssh-add id_ansible
+#    shell: |
+#        ssh-add ~/.ssh/id_ansible
+#
+#  - name: ssh-add admin_optionnalytics
+#    shell: |
+#        ssh-add ~/.ssh/admin_optionnalytics
 
 - hosts: server1
   #name: git pull
