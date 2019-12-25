@@ -1,14 +1,4 @@
 [Unit]
-Description=gunicorn socket
-
-[Socket]
-ListenStream=/run/gunicorn.sock
-
-[Install]
-WantedBy=sockets.target
-
-djangoadmin@gammatrades:~$ cat /etc/systemd/system/gunicorn.service
-[Unit]
 Description=gunicorn daemon
 Requires=gunicorn.socket
 After=network.target
