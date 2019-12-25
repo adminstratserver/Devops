@@ -1,0 +1,42 @@
+---
+- hosts: server1
+  name: Run Django Migrations
+  vars:
+    new_username: djangoadmin16
+    dir_project: pyapps
+    app_dir: ONTV_Files
+    #venv_dir: '/home/{{ new_username }}/{{ dir_project }}/venv'
+    #venv_python: '{{ venv_dir }}/bin/python3'
+
+  tasks:
+
+  - name: create database initial script
+    become: true
+    django_manage:
+      command: makemigrations
+      app_path: '/home/{{ new_username }}/{{ dir_project }}/{{ app_dir }}'
+      pythonpath: '/home/{{ new_username }}/{{ dir_project }}/venv/bin/python3'
+      virtualenv: '/home/{{ new_username }}/{{ dir_project }}/venv'
+
+  - name: migrate to postgres database
+    become: true
+    django_manage:
+      command: mmigrate
+      app_path: '/home/{{ new_username }}/{{ dir_project }}/{{ app_dir }}'
+      pythonpath: '/home/{{ new_username }}/{{ dir_project }}/venv/bin/python3'
+      virtualenv: '/home/{{ new_username }}/{{ dir_project }}/venv'
+
+#  - name: Make migrations
+#    shell: echo ". {{ venv_dir }} ; {{ venv_python }} {{ app_dir }}/manage.py makemigrations " > /home/{{ new_username }}/{{ dir_project }}/{{ app_dir }}/shell_output
+#    become: yes
+
+#  - name: Migrate database
+#    django_manage: app_path={{ app_dir }}
+#                                 command=migrate
+#                                 virtualenv={{ venv_dir }}
+
+#  - name: Get all static files
+#    become: yes
+#    django_manage: app_path={{ app_dir }}
+#                                 command=collectstatic
+#                                 virtualenv={{ venv_dir }}

@@ -2,9 +2,9 @@
 - name: Create database and user
   hosts: server1
   vars:
-    db_database: test_db1
-    db_user: test_user1
-    db_password: qwert12345
+    db_database: btre_prod
+    db_user: dbadmin
+    db_password: Romans12:1
 
   tasks:
 
