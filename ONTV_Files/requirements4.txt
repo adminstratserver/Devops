@@ -12,4 +12,4 @@ djangorestframework==3.10.3
 django-rest-auth==0.9.5
 django-allauth==0.40.0
 httpie==1.0.3
-
+gunicorn==19.7.1
