@@ -1,0 +1,18 @@
+server {
+    listen 80;
+    server_name 178.128.85.164;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /home/djangoadmin/pyapps/ONT_V32;
+    }
+
+    location /media/ {
+        root /home/djangoadmin/pyapps/ONT_V32;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/run/gunicorn.sock;
+    }
+}
