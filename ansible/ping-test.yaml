@@ -1,0 +1,6 @@
+---
+- name: Test connectivity to target server
+  hosts: web_server1
+  tasks:
+    - name: Ping test
+      ping:

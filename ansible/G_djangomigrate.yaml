@@ -1,30 +1,25 @@
 ---
-- hosts: server1
-  name: Run Django Migrations
+- hosts: web_server1
+  name: Run Django Migrations (G-0/3)
   vars:
-    new_username: djangoadmin16
-    dir_project: pyapps
-    app_dir: ONTV_Files
     app_path: '/home/{{ new_username }}/{{ dir_project }}/{{ app_dir }}'
     pythonpath: '/home/{{ new_username }}/{{ dir_project }}/venv/bin/python3'
     virtualenv: '/home/{{ new_username }}/{{ dir_project }}/venv'
 
   tasks:
 
-  - name: command makemigrations
+  - name: command makemigrations (G-1/3)
     shell: ". /home/{{ new_username }}/{{ dir_project }}/venv/bin/activate; {{ pythonpath }} {{ app_path }}/manage.py makemigrations"
     become: yes
 
-  - name: command migrate
+  - name: command migrate (G-2/3)
     shell: ". /home/{{ new_username }}/{{ dir_project }}/venv/bin/activate; {{ pythonpath }} {{ app_path }}/manage.py migrate"
     become: yes
 
-#  - name: delete existing files in static directory before collectstatic
-#    shell: ". /home/{{ new_username }}/{{ dir_project }}/venv/bin/activate; rm -r /home/{{ new_username }}/{{ dir_project }}/{{ app_dir }}/static/*"
-#    become: yes
-
-  - name: command collectstatic
-    shell: ". /home/{{ new_username }}/{{ dir_project }}/venv/bin/activate; {{ pythonpath }} {{ app_path }}/manage.py collectstatic"
+  - name: delete existing files in static directory before collectstatic
+    shell: ". /home/{{ new_username }}/{{ dir_project }}/venv/bin/activate; rm -r /home/{{ new_username }}/{{ dir_project }}/{{ app_dir }}/static/*"
     become: yes
 
-  
+  - name: command collectstatic (G-3/3)
+    shell: ". /home/{{ new_username }}/{{ dir_project }}/venv/bin/activate; {{ pythonpath }} {{ app_path }}/manage.py collectstatic"
+    become: yes

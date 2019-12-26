@@ -1,22 +1,14 @@
 ---
 - hosts: local
-  #name: ssh-add keys
+  name: Enable SSH-Agent And Clone Files Into Remote Server (E-0/3)
   tasks:
 
-  - name: enable ssh agent and add id_ansible
+  - name: enable ssh agent and add id_ansible (E-1/3)
     shell: |
       eval "$(ssh-agent)"
       ssh-add ~/.ssh/id_ansible
 
-#  - name: ssh-add id_ansible
-#    shell: |
-#        ssh-add ~/.ssh/id_ansible
-#
-#  - name: ssh-add admin_optionnalytics
-#    shell: |
-#        ssh-add ~/.ssh/admin_optionnalytics
-
-- hosts: server1
+- hosts: web_server1
   #name: git pull
   vars:
     dir_project: pyapps
@@ -26,12 +18,12 @@
 
   tasks:
 
-  - name: clone repository from github
+  - name: clone repository from github (E-2/3)
     git:
       repo: '{{ git_repo }}'
       dest: /home/{{ new_username }}/{{ dir_project }}
       refspec: '+refs/pull/*:refs/heads/*'
 
-  - name: create a venv environment inside pyapps directory
+  - name: create a venv environment inside pyapps directory (E-3/3)
     become: true
     command: python3 -m venv /home/{{ new_username }}/{{ dir_project }}/venv

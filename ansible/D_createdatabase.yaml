@@ -1,27 +1,22 @@
 ---
-- name: Create database and user
-  hosts: server1
-  vars:
-    db_database: btre_prod
-    db_user: dbadmin
-    db_password: Romans12:1
+- name: Create Database And User (D-0/3)
+  hosts: web_server1
 
   tasks:
 
-    - name: Create database
+    - name: create database (D-1/3)
       become: true
       become_user: postgres
       postgresql_db:
             name: '{{ db_database }}'
             encoding: UTF-8
 
-
-    - name: Create user
+    - name: create user (D-2/3)
       postgresql_user: name={{ db_user }} password={{ db_password }}
       become: true
       become_user: postgres
 
-    - name: GRANT ALL PRIVILEGES ON DATABASE to user
+    - name: grant all priviledges on database to user (D-3/3)
       become: true
       become_user: postgres
       postgresql_privs:

@@ -1,11 +1,9 @@
 ---
-- hosts: server1
-  vars:
-    new_username: djangoadmin16
-    file_privatekey: id_ansible
+- hosts: web_server1
+  name: Create New User (A-0/8)
   tasks:
 
-  - name: Create a login user
+  - name: create a login user (A-1/8)
     user:
       name: '{{ new_username }}'
       password: '$6$F4NWXRFtSdCi8$DsB5vvMJYusQhSbvGXrYDXL6Xj37MUuqFCd4dGXdKd6NyxT3lpdELN07/Kpo7EjjWnm9zusFg/LLFv6oc.ynu/'
@@ -16,7 +14,7 @@
       createhome: yes        # Defaults to yes
       home: /home/{{ new_username }}  # Defaults to /home/<username>
 
-  - name: change sudo users - no need present password
+  - name: change sudo users - no need present password (A-2/8)
     lineinfile:
       path: /etc/sudoers
       state: present
@@ -24,29 +22,29 @@
       line: '%sudo ALL=(ALL) NOPASSWD: ALL'
       validate: 'visudo -cf %s'
 
-  - name: Check directory.
+  - name: Check directory. (A-3/8)
     stat:
       path: /home/{{ new_username }}/.ssh
     register: my_folder
 
-  - name: Create a .ssh directory
+  - name: Create a .ssh directory (A-4/8)
     file:
       path: /home/{{ new_username }}/.ssh
       state: directory
       mode: 0755
     when: my_folder.stat.exists == false
 
-  - name: Copy authorized_keys file
+  - name: Copy authorized_keys file (A-5/8)
     command: cp ~/.ssh/authorized_keys /home/{{ new_username }}/.ssh/authorized_keys
 
-  - name: Copy private file to remote server
+  - name: Copy private file to remote server (A-6/8)
     copy:
       src: ~/.ssh/{{ file_privatekey }}
       dest: /home/{{ new_username }}/.ssh/{{ file_privatekey }}
       mode: u=r,og=---
 
-  - name: Change ACL permissions of authorized_keys to new user
+  - name: Change ACL permissions of authorized_keys to new user (A-7/8)
     command: setfacl -m u:{{ new_username }}:r /home/{{ new_username }}/.ssh/authorized_keys
 
-  - name: Change ACL permissions of file_privatekey to new user
+  - name: Change ACL permissions of file_privatekey to new user (A-8/8)
     command: setfacl -m u:{{ new_username }}:r /home/{{ new_username }}/.ssh/{{ file_privatekey }}

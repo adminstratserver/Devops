@@ -1,10 +1,10 @@
 ---
-- name: Improve Server Security Settings
-  hosts: server1
+- name: Improve Server Security Settings (B-0/5)
+  hosts: web_server1
   gather_facts: false
 
   tasks:
-    - name: disable password authentication
+    - name: disable password authentication (B-1/5)
       lineinfile:
         path: "{{ item }}"
         regex: ^(# *)?PasswordAuthentication
@@ -12,7 +12,7 @@
       loop:
         - /etc/ssh/sshd_config
 
-    - name: disable root login
+    - name: disable root login (B-2/5)
       lineinfile:
         path: "{{ item }}"
         regex: ^(# *)?PermitRootLogin
@@ -20,11 +20,17 @@
       loop:
         - /etc/ssh/sshd_config
 
-    - name: restart sshd
+    - name: restart sshd (B-3/4)
       service: name=sshd state=restarted
 
-    - name: Enable UFW and allow OpenSSH
+    - name: Enable UFW and allow OpenSSH (B-4/5)
       ufw:
         rule: allow
         name: OpenSSH
         state: enabled
+
+    - name: Allow all access to tcp port 8000 (B-5/5)
+      ufw:
+        rule: allow
+        port: '8000'
+        proto: tcp

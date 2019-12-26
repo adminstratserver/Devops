@@ -1,0 +1,39 @@
+---
+- hosts: web_server1
+  name: Enable Gunicorn and Nginx (H-0/7)
+  become: true
+
+  tasks:
+
+    - name: start gunicorn (H-1/7)
+      systemd:
+        state: started
+        name: gunicorn.socket
+
+    - name: enable gunicorn (H-2/7)
+      systemd:
+        enabled: yes
+        name: gunicorn.socket
+
+    - name: link nginx-file to sites-enabled dir (H-3/7)
+      become: true
+      command: ln -s /etc/nginx/sites-available/nginx-file /etc/nginx/sites-enabled
+
+    - name: test nginx (H-4/7)
+      command: nginx -t
+
+    - name: allow traffic on nginx (H-5/7)
+      ufw:
+        rule: allow
+        name: 'Nginx Full'
+        state: enabled
+
+    - name: deny all access to port 8000 (H-6/7)
+      ufw:
+        rule: deny
+        port: '8000'
+
+    - name: restart nginx (H-7/7)
+      systemd:
+        state: restarted
+        name: nginx

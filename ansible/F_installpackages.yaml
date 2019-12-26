@@ -1,42 +1,80 @@
 ---
-- hosts: server1
-  name: Install Packages from requirements.txt, ngunicorn setup at remote server (F-0/6)
-  vars:
-    new_username: djangoadmin16
-    dir_project: pyapps
-    app_dir: ONTV_Files
+- hosts: web_server1
+  name: Install Packages from requirements.txt, ngunicorn setup at remote server (F-0/12)
 
   tasks:
 
-  - name: install dependencies (F-1/6)
+  - name: install dependencies (F-1/12)
     become: true
     pip:    requirements=/home/{{ new_username }}/{{ dir_project }}/{{ app_dir }}/requirements4.txt
             virtualenv=/home/{{ new_username }}/{{ dir_project }}/venv
             virtualenv_python=python3.6.9
 
-  - name: copy gunicorn.socket file (F-2/6)
+  - name: copy gunicorn.socket file (F-2/12)
     become: true
     command: cp /home/{{ new_username }}/{{ dir_project }}/gunicorn/gunicorn.socket /etc/systemd/system/gunicorn.socket
 
-  - name: copy gunicorn.service file (F-3/6)
+  - name: copy gunicorn.service file (F-3/12)
     become: true
     command: cp /home/{{ new_username }}/{{ dir_project }}/gunicorn/gunicorn.service /etc/systemd/system/gunicorn.service
 
+  - name: copy nginx file (F-4/12)
+    become: true
+    command: cp /home/{{ new_username }}/{{ dir_project }}/gunicorn/nginx-file /etc/nginx/sites-available/nginx-file
 
-  - name: edit gunicorn.services User (F-4/6)
+  - name: edit gunicorn.services User (F-5/12)
+    become: true
     lineinfile:
       path: /etc/systemd/system/gunicorn.service
       regexp: '^User='
       line: User={{ new_username }}
 
-  - name: edit gunicorn.services WorkingDirectory (F-5/6)
+  - name: edit gunicorn.services WorkingDirectory (F-6/12)
+    become: true
     lineinfile:
       path: /etc/systemd/system/gunicorn.service
       regexp: '^WorkingDirectory='
       line: WorkingDirectory=/home/{{ new_username }}/{{ dir_project }}/{{ app_dir }}
 
-  - name: edit gunicorn.services ExecStart (F-6/6)
+  - name: edit gunicorn.services ExecStart (F-7/12)
+    become: true
     lineinfile:
       path: /etc/systemd/system/gunicorn.service
       regexp: '^ExecStart='
       line: ExecStart=/home/{{ new_username }}/{{ dir_project }}/venv/bin/gunicorn \
+
+  - name: edit server_name (F-8/12)
+    become: true
+    lineinfile:
+      path: /etc/nginx/sites-available/nginx-file
+      regexp: 'server_name'
+      line: '    server_name {{ remote_ip_address }};'
+
+  - name: edit root1 (F-9/12)
+    become: true
+    lineinfile:
+      path: /etc/nginx/sites-available/nginx-file
+      regexp: 'root1'
+      line: '        root /home/{{ new_username }}/{{ dir_project }}/{{ app_dir }};'
+
+  - name: edit root2 (F-10/12)
+    become: true
+    lineinfile:
+      path: /etc/nginx/sites-available/nginx-file
+      regexp: 'root2'
+      line: '        root /home/{{ new_username }}/{{ dir_project }}/{{ app_dir }};'
+
+  - name: edit gunicorn.services wsgi application (F-11/12)
+    become: true
+    lineinfile:
+      path: /etc/systemd/system/gunicorn.service
+      regexp: 'xxxx.wsgi:application'
+      line: '     {{ django_projectname }}.wsgi:application'
+
+
+  - name: Add a line to nginx.conf (F-12/12)
+    become: true
+    lineinfile:
+      path: /etc/nginx/nginx.conf
+      regex: '^http {'
+      line: 'http {  client_max_body_size 20M;'

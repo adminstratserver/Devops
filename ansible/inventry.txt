@@ -1,8 +1,17 @@
-[servers]
-server1 ansible_host=159.89.151.169
+[web_server1]
+178.128.182.22
+
+[web_server1:vars]
+remote_ip_address='178.128.182.22'
+new_username='djangoadmin16'
+dir_project='pyapps'
+app_dir='ONTV_Files'
+file_privatekey='id_ansible'
+django_projectname='btre'
+db_database='btre_prod'
+db_user='dbadmin'
+db_password='Romans12:1'
+ansible_python_interpreter='/usr/bin/python3'
 
 [local]
 local_machine ansible_connection=local ansible_host=localhost
-
-[servers:vars]
-ansible_python_interpreter=/usr/bin/python3
