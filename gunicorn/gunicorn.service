@@ -11,7 +11,7 @@ ExecStart=
           --access-logfile - \
           --workers 3 \
           --bind unix:/run/gunicorn.sock \
-          btre.wsgi:application
+          xxxx.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
